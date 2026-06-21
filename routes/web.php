@@ -19,6 +19,8 @@ Route::get('/tasks', fn () => Inertia::render('Tasks'));
 Route::get('/reports', fn () => Inertia::render('Reports'));
 Route::get('/settings', fn () => Inertia::render('Settings'));
 
+Route::get('/login', fn () => redirect('/'))->name('login');
+
 Route::middleware(['auth'])->group(function (): void {
     Route::get('/onboarding', [OnboardingController::class, 'show'])->name('onboarding.show');
     Route::post('/onboarding/workspace', [OnboardingController::class, 'storeWorkspace'])->name('onboarding.workspace');
