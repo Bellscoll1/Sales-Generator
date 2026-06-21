@@ -19,4 +19,9 @@ body {
   background: radial-gradient(circle at 0% 0%, #e0ecff 0, #f4f8ff 45%, #ffffff 100%);
   color: var(--lc-text);
   min-height: 100vh;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+#app {
+  min-height: 100vh;
 }
