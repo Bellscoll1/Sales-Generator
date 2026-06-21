@@ -6,6 +6,9 @@ use App\Domain\AI\Contracts\AIClient;
 use App\Domain\AI\Services\OpenAIClient;
 use App\Domain\Billing\Contracts\BillingGateway;
 use App\Domain\Billing\Services\StripeBillingGateway;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use OpenAI;
 use Stripe\StripeClient;
@@ -35,6 +38,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        RateLimiter::for('api', function (Request $request): Limit {
+            return Limit::perMinute(120)->by((string) ($request->user()?->id ?? $request->ip()));
+        });
     }
 }
