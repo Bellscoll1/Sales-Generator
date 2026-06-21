@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.vue';
+@source '../**/*.ts';
+
+:root {
+  --lc-primary: #2563eb;
+  --lc-primary-700: #1d4ed8;
+  --lc-bg: #f4f8ff;
+  --lc-panel: #ffffff;
+  --lc-text: #0f172a;
+  --lc-muted: #64748b;
+}
+
+body {
+  background: radial-gradient(circle at 0% 0%, #e0ecff 0, #f4f8ff 45%, #ffffff 100%);
+  color: var(--lc-text);
+  min-height: 100vh;
+}

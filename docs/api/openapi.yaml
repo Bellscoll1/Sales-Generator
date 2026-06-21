@@ -1,0 +1,33 @@
+openapi: 3.1.0
+info:
+  title: LeadConnect API
+  version: 1.0.0
+servers:
+  - url: /api/v1
+paths:
+  /auth/register:
+    post:
+      summary: Register user and workspace owner
+  /auth/login:
+    post:
+      summary: Login and issue sanctum token
+  /leads:
+    get:
+      summary: List leads
+    post:
+      summary: Create lead
+  /campaigns:
+    get:
+      summary: List campaigns
+    post:
+      summary: Create campaign
+  /deals:
+    get:
+      summary: List deals
+    post:
+      summary: Create deal
+  /tasks:
+    get:
+      summary: List tasks
+    post:
+      summary: Create task
