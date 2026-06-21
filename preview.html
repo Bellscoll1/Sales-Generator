@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeadConnect Static Preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: radial-gradient(circle at top, #eef5ff 0%, #f8fbff 48%, #ffffff 100%);
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .panel {
+      border: 1px solid rgba(226, 232, 240, 0.85);
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 24px;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.05);
+    }
+    .nav-active {
+      background: linear-gradient(90deg, #eff5ff 0%, #f9fbff 100%);
+      color: #2563eb;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900">
+  <div class="mx-auto flex min-h-screen max-w-[1440px]">
+    <aside class="hidden w-[252px] border-r border-slate-200/80 bg-white/88 px-4 pb-6 pt-5 backdrop-blur lg:flex lg:flex-col">
+      <div class="mb-8 flex items-center gap-3 px-2">
+        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877f2] text-sm font-bold text-white">in</div>
+        <div>
+          <p class="text-[22px] font-semibold tracking-[-0.03em] text-slate-900">LeadConnect</p>
+          <p class="text-xs text-slate-400">Static preview mode</p>
+        </div>
+      </div>
+      <nav id="sidebar" class="space-y-1.5"></nav>
+      <div class="mt-auto border-t border-slate-100 pt-5">
+        <div class="flex items-center gap-3 rounded-2xl px-2 py-3">
+          <div class="h-11 w-11 rounded-full bg-[linear-gradient(135deg,#d8dde8,#ffffff)] p-[2px]">
+            <div class="flex h-full w-full items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">JS</div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-[14px] font-semibold text-slate-800">John Smith</p>
+            <p class="text-xs text-slate-500">Pro Plan</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="flex-1 px-4 py-4 lg:px-8 lg:py-6">
+      <div id="mobile-nav" class="mb-4 flex gap-2 overflow-x-auto pb-2 lg:hidden"></div>
+      <div id="app"></div>
+    </main>
+  </div>
+
+  <script>
+    const pages = [
+      { key: 'dashboard', label: 'Dashboard', icon: 'D' },
+      { key: 'leads', label: 'Leads', icon: 'L' },
+      { key: 'messaging', label: 'Messaging', icon: 'M' },
+      { key: 'campaigns', label: 'Campaigns', icon: 'C' },
+      { key: 'crm', label: 'CRM', icon: 'R' },
+      { key: 'deals', label: 'Deals', icon: '$' },
+      { key: 'tasks', label: 'Tasks', icon: 'T' },
+      { key: 'reports', label: 'Reports', icon: 'P' },
+      { key: 'settings', label: 'Settings', icon: 'S' },
+      { key: 'onboarding', label: 'Onboarding', icon: 'O' },
+    ];
+
+    function current() {
+      const key = location.hash.replace('#', '') || 'dashboard';
+      return pages.some((p) => p.key === key) ? key : 'dashboard';
+    }
+
+    function header(title, subtitle) {
+      return `
+        <header class="mb-6">
+          <h1 class="text-[33px] font-semibold tracking-[-0.04em] text-slate-900">${title}</h1>
+          <p class="mt-1 text-[15px] text-slate-500">${subtitle}</p>
+        </header>
+      `;
+    }
+
+    function metrics(data) {
+      return `
+        <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          ${data.map((m) => `
+            <article class="panel px-5 py-4">
+              <p class="text-[13px] font-medium text-slate-500">${m.label}</p>
+              <p class="mt-1 text-[33px] font-semibold tracking-[-0.04em] text-slate-900">${m.value}</p>
+              <p class="mt-3 text-xs font-semibold text-emerald-500">${m.note}</p>
+            </article>
+          `).join('')}
+        </section>
+      `;
+    }
+
+    const render = {
+      dashboard: () => `
+        <section class="space-y-6">
+          ${header('Dashboard', "Welcome back, John! Here's what's happening with your leads.")}
+          ${metrics([
+            { label: 'Total Leads', value: '1,250', note: '↑ 18.5% vs last 30 days' },
+            { label: 'Messages Sent', value: '320', note: '↑ 22.4% vs last 30 days' },
+            { label: 'Responses', value: '85', note: '↑ 26.7% vs last 30 days' },
+            { label: 'Deals Won', value: '18', note: '↑ 12.1% vs last 30 days' },
+          ])}
+          <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+            <article class="panel p-5">
+              <h2 class="mb-4 text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Recent Leads</h2>
+              <div class="overflow-hidden rounded-[18px] border border-slate-100">
+                <table class="min-w-full text-left text-[14px] text-slate-600">
+                  <thead class="bg-slate-50/75 text-[11px] uppercase tracking-[0.08em] text-slate-400">
+                    <tr><th class="px-4 py-4">Lead</th><th class="px-4 py-4">Company</th><th class="px-4 py-4">Status</th><th class="px-4 py-4">Last Activity</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr class="border-t border-slate-100"><td class="px-4 py-4 font-medium text-slate-800">Sarah Johnson</td><td class="px-4 py-4">TechSolutions</td><td class="px-4 py-4"><span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-[#2f80ff]">Contacted</span></td><td class="px-4 py-4">1h ago</td></tr>
+                    <tr class="border-t border-slate-100"><td class="px-4 py-4 font-medium text-slate-800">Michael Chen</td><td class="px-4 py-4">Innovate Labs</td><td class="px-4 py-4"><span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">Replied</span></td><td class="px-4 py-4">3h ago</td></tr>
+                    <tr class="border-t border-slate-100"><td class="px-4 py-4 font-medium text-slate-800">Emily Davis</td><td class="px-4 py-4">GrowthCorp</td><td class="px-4 py-4"><span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-600">Interested</span></td><td class="px-4 py-4">1d ago</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <aside class="panel p-5">
+              <h2 class="mb-4 text-[22px] font-semibold tracking-[-0.03em] text-slate-900">Messaging</h2>
+              <div class="space-y-3 text-sm text-slate-600">
+                <div class="rounded-2xl border border-slate-100 px-4 py-3"><p class="font-medium text-slate-800">Michael Chen</p><p class="mt-1 text-slate-500">Can you share pricing and a short demo?</p></div>
+                <div class="rounded-2xl border border-slate-100 px-4 py-3"><p class="font-medium text-slate-800">Sarah Johnson</p><p class="mt-1 text-slate-500">The campaign brief looks good to me.</p></div>
+                <div class="rounded-2xl border border-slate-100 px-4 py-3"><p class="font-medium text-slate-800">Ryan Clark</p><p class="mt-1 text-slate-500">Please resend the proposal PDF.</p></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      `,
+      leads: () => `
+        <section class="space-y-6">
+          ${header('Leads', 'Manage prospects, saved searches, tags, and enrichment workflows from one view.')}
+          ${metrics([
+            { label: 'Total Prospects', value: '4,286', note: '↑ 14.8% this month' },
+            { label: 'New This Week', value: '326', note: '↑ 9.1% this week' },
+            { label: 'Avg Lead Score', value: '76', note: '↑ 5.4% quality lift' },
+            { label: 'Saved Searches', value: '18', note: '6 synced daily' },
+          ])}
+          <article class="panel p-5"><h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Prospect Database</h2><p class="mt-3 text-sm text-slate-500">Segmented lead table, enrichment queue, and saved filters reflected from app styling.</p></article>
+        </section>
+      `,
+      messaging: () => `<section class="space-y-6">${header('Messaging', 'Stay on top of replies, assignments, and AI-generated follow-ups in one inbox.')}<article class="panel p-5"><h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Conversation Workspace</h2><p class="mt-3 text-sm text-slate-500">Three-column inbox, thread details, and AI suggestion panel match the live page structure.</p></article></section>`,
+      campaigns: () => `<section class="space-y-6">${header('Campaigns', 'Build multi-step sequences across LinkedIn and email with AI personalization.')}<article class="panel p-5"><h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Active Sequences</h2><p class="mt-3 text-sm text-slate-500">Campaign KPI cards, sequence rows, and workflow builder components are represented here.</p></article></section>`,
+      crm: () => `<section class="space-y-6">${header('CRM', 'Track pipeline progression, ownership, and forecasting with a clean deal board.')}<article class="panel p-5"><h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Pipeline Board</h2><p class="mt-3 text-sm text-slate-500">Lead, Qualified, Proposal, and Negotiation lanes mirror the app UI language.</p></article></section>`,
+      deals: () => `<section class="space-y-6">${header('Deals', 'Review active opportunities, close dates, owners, and win probability.')}<article class="panel p-5"><h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Opportunity List</h2><p class="mt-3 text-sm text-slate-500">Deal list and forecast side panel adapted for static review.</p></article></section>`,
+      tasks: () => `<section class="space-y-6">${header('Tasks', 'Coordinate follow-ups, demos, and reminders with calendar and board-friendly layouts.')}<article class="panel p-5"><h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Task Columns</h2><p class="mt-3 text-sm text-slate-500">Today, Upcoming, and Completed sections follow the same card system.</p></article></section>`,
+      reports: () => `<section class="space-y-6">${header('Reports', 'Measure reply rates, meetings booked, rep productivity, and revenue contribution.')}<article class="panel p-5"><h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Analytics</h2><p class="mt-3 text-sm text-slate-500">KPI cards, performance chart area, and rep leaderboard are included in static form.</p></article></section>`,
+      settings: () => `<section class="space-y-6">${header('Settings', 'Configure workspace details, team permissions, notifications, and connected tools.')}<article class="panel p-5"><h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Workspace + Integrations</h2><p class="mt-3 text-sm text-slate-500">Profile and integration status cards are rendered for visual verification.</p></article></section>`,
+      onboarding: () => `<section class="space-y-6">${header('Onboarding', 'Complete the workspace setup to launch your first outbound campaign.')}<article class="panel p-5"><h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Checklist</h2><ol class="mt-4 space-y-3 text-sm text-slate-600"><li class="rounded-2xl border border-slate-100 px-4 py-3">1. Create workspace profile</li><li class="rounded-2xl border border-slate-100 px-4 py-3">2. Invite sales team</li><li class="rounded-2xl border border-slate-100 px-4 py-3">3. Connect LinkedIn account</li><li class="rounded-2xl border border-slate-100 px-4 py-3">4. Import first lead list</li><li class="rounded-2xl border border-slate-100 px-4 py-3">5. Launch first campaign</li></ol></article></section>`,
+    };
+
+    function renderNav(active) {
+      document.getElementById('sidebar').innerHTML = pages.map((p) => `
+        <a href="#${p.key}" class="${p.key === active ? 'nav-active' : 'text-slate-600 hover:bg-slate-50'} flex items-center gap-3 rounded-xl px-3 py-3 text-[14px] font-medium transition">
+          <span class="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-white text-[10px] font-semibold text-slate-500">${p.icon}</span>
+          <span>${p.label}</span>
+        </a>
+      `).join('');
+
+      document.getElementById('mobile-nav').innerHTML = pages.map((p) => `
+        <a href="#${p.key}" class="${p.key === active ? 'bg-[#2f80ff] text-white' : 'border border-slate-200 bg-white text-slate-600'} shrink-0 rounded-full px-4 py-2 text-sm font-medium">
+          ${p.label}
+        </a>
+      `).join('');
+    }
+
+    function paint() {
+      const active = current();
+      renderNav(active);
+      document.getElementById('app').innerHTML = render[active]();
+      const title = pages.find((p) => p.key === active)?.label || 'Preview';
+      document.title = `LeadConnect Preview - ${title}`;
+    }
+
+    window.addEventListener('hashchange', paint);
+    paint();
+  </script>
+</body>
+</html>
