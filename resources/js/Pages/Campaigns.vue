@@ -18,10 +18,20 @@
         <article class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-[0_20px_45px_rgba(15,23,42,0.05)]">
           <div class="mb-4 flex items-center justify-between">
             <h2 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Active Sequences</h2>
-            <button class="rounded-xl bg-[#2f80ff] px-4 py-2 text-sm font-medium text-white">New Campaign</button>
+            <button
+              type="button"
+              class="rounded-xl bg-[#2f80ff] px-4 py-2 text-sm font-medium text-white"
+              @click="openCreateModal"
+            >
+              New Campaign
+            </button>
           </div>
-          <div class="space-y-4">
-            <div v-for="campaign in campaigns" :key="campaign.name" class="rounded-[20px] border border-slate-100 p-4">
+          <div v-if="campaigns.length === 0" class="rounded-[20px] border border-dashed border-slate-200 px-5 py-10 text-center">
+            <p class="text-base font-semibold text-slate-700">No campaigns yet</p>
+            <p class="mt-1 text-sm text-slate-500">Create your first campaign to start automating outreach.</p>
+          </div>
+          <div v-else class="space-y-4">
+            <div v-for="campaign in campaigns" :key="campaign.id" class="rounded-[20px] border border-slate-100 p-4">
               <div class="flex items-center justify-between gap-4">
                 <div>
                   <p class="font-semibold text-slate-800">{{ campaign.name }}</p>
@@ -50,23 +60,119 @@
           </article>
         </aside>
       </div>
+
+      <div v-if="isCreateModalOpen" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 px-4" @click.self="closeCreateModal">
+        <article class="w-full max-w-lg rounded-[24px] border border-slate-200/80 bg-white p-6 shadow-[0_25px_60px_rgba(15,23,42,0.2)]">
+          <div class="mb-5 flex items-center justify-between">
+            <h3 class="text-[24px] font-semibold tracking-[-0.03em] text-slate-900">Create Campaign</h3>
+            <button type="button" class="rounded-lg px-2 py-1 text-slate-400 hover:bg-slate-100" @click="closeCreateModal">✕</button>
+          </div>
+
+          <form class="space-y-4" @submit.prevent="submitCampaign">
+            <label class="block space-y-1.5">
+              <span class="text-sm font-medium text-slate-600">Campaign name</span>
+              <input
+                v-model="form.name"
+                type="text"
+                class="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#2f80ff]"
+                placeholder="Q3 SaaS Founder Outreach"
+              />
+              <p v-if="form.errors.name" class="text-xs font-medium text-rose-500">{{ form.errors.name }}</p>
+            </label>
+
+            <label class="block space-y-1.5">
+              <span class="text-sm font-medium text-slate-600">Channel type</span>
+              <select v-model="form.type" class="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#2f80ff]">
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Email">Email</option>
+                <option value="Mixed Campaign">Mixed Campaign</option>
+              </select>
+              <p v-if="form.errors.type" class="text-xs font-medium text-rose-500">{{ form.errors.type }}</p>
+            </label>
+
+            <label class="block space-y-1.5">
+              <span class="text-sm font-medium text-slate-600">Start date (optional)</span>
+              <input
+                v-model="form.starts_at"
+                type="date"
+                class="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#2f80ff]"
+              />
+              <p v-if="form.errors.starts_at" class="text-xs font-medium text-rose-500">{{ form.errors.starts_at }}</p>
+            </label>
+
+            <div class="flex items-center justify-end gap-3 pt-2">
+              <button type="button" class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600" @click="closeCreateModal">Cancel</button>
+              <button
+                type="submit"
+                class="rounded-xl bg-[#2f80ff] px-4 py-2 text-sm font-medium text-white"
+                :disabled="form.processing"
+              >
+                {{ form.processing ? 'Creating...' : 'Create Campaign' }}
+              </button>
+            </div>
+          </form>
+        </article>
+      </div>
     </section>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
+import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import AppLayout from '../Layouts/AppLayout.vue';
 
-const stats = [
-  { label: 'Active Campaigns', value: '14', note: '3 launched this week' },
-  { label: 'Messages Sent', value: '2,140', note: '↑ 18.1% week over week' },
-  { label: 'Replies', value: '284', note: '13.2% reply rate' },
-  { label: 'Meetings Booked', value: '41', note: '↑ 7 new meetings' },
-];
+type CampaignStat = {
+  label: string;
+  value: string;
+  note: string;
+};
 
-const campaigns = [
-  { name: 'SaaS Leaders Outreach', steps: 5, type: 'Mixed Campaign', status: 'Running', enrolled: 240, replies: 42, meetings: 12, conversion: '17.5%' },
-  { name: 'Founders Q3 Sequence', steps: 4, type: 'LinkedIn', status: 'Running', enrolled: 180, replies: 29, meetings: 7, conversion: '11.4%' },
-  { name: 'RevOps Email Sprint', steps: 3, type: 'Email', status: 'Running', enrolled: 320, replies: 51, meetings: 10, conversion: '15.9%' },
-];
+type CampaignItem = {
+  id: string;
+  name: string;
+  steps: number;
+  type: string;
+  status: string;
+  enrolled: number;
+  replies: number;
+  meetings: number;
+  conversion: string;
+};
+
+const props = defineProps<{
+  stats: CampaignStat[];
+  campaigns: CampaignItem[];
+}>();
+
+const isCreateModalOpen = ref(false);
+
+const form = useForm({
+  name: '',
+  type: 'Mixed Campaign',
+  status: 'draft',
+  starts_at: '',
+});
+
+const openCreateModal = (): void => {
+  isCreateModalOpen.value = true;
+};
+
+const closeCreateModal = (): void => {
+  isCreateModalOpen.value = false;
+  form.clearErrors();
+};
+
+const submitCampaign = (): void => {
+  form.post('/campaigns', {
+    preserveScroll: true,
+    onSuccess: () => {
+      form.reset();
+      closeCreateModal();
+    },
+  });
+};
+
+const stats = props.stats;
+const campaigns = props.campaigns;
 </script>

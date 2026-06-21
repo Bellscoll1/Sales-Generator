@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CampaignPageController;
 use App\Http\Controllers\OnboardingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -12,7 +13,8 @@ Route::get('/', function () {
 
 Route::get('/leads', fn () => Inertia::render('Leads'));
 Route::get('/messaging', fn () => Inertia::render('Messaging'));
-Route::get('/campaigns', fn () => Inertia::render('Campaigns'));
+Route::get('/campaigns', [CampaignPageController::class, 'index'])->name('web.campaigns.index');
+Route::post('/campaigns', [CampaignPageController::class, 'store'])->name('web.campaigns.store');
 Route::get('/crm', fn () => Inertia::render('CRM'));
 Route::get('/deals', fn () => Inertia::render('Deals'));
 Route::get('/tasks', fn () => Inertia::render('Tasks'));
